@@ -1,0 +1,114 @@
+<!doctype html public "-//WC3//DTD HTML 4.01//EN" "http://w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Telling Time in Thai</title>
+    <style>
+      body, input, button {
+        text-align: center;
+        font-size: 36px;
+      }
+    </style>
+    <script>
+      function getTimeOfDay(current_hour) {
+        if (current_hour == 0) return 'tiang keun';
+        if (current_hour < 6) return 'dtee';
+        if (current_hour < 12) return 'chao';
+        if (current_hour == 12) return 'tiang';
+        if (current_hour < 16) return 'bai';
+        if (current_hour < 19) return 'yen';
+        return "tum";
+      }
+
+      function getThaiNumberOneDigit(num) {
+        if (num == 0) return 'soon';
+        if (num == 1) return 'neung';
+        if (num == 2) return 'song';
+        if (num == 3) return 'saam';
+        if (num == 4) return 'see';
+        if (num == 5) return 'ha';
+        if (num == 6) return 'hok';
+        if (num == 7) return 'jet';
+        if (num == 8) return 'bad';
+        if (num == 9) return 'gao';
+      }
+
+      function getThaiNumber(num) {
+        //only works for numbers 1-99
+        if (num < 10) return getThaiNumberOneDigit(num);
+        var ones_place = num % 10;
+        var tens_place = (num - ones_place) / 10;
+        var ones_thai = getThaiNumberOneDigit(ones_place);
+        var tens_thai = getThaiNumberOneDigit(tens_place);
+        if (ones_place == 0) ones_thai = '';
+        if (ones_place == 1) ones_thai = 'et';
+        if (tens_place == 1) tens_thai = '';
+        if (tens_place == 2) tens_thai = 'yee';
+        return tens_thai + ' sib ' + ones_thai;
+      }
+
+      function romanToThai(text) {
+        text = text.replace('chao', 'เช้า');
+        text = text.replace('bai', 'บ่าย');
+        text = text.replace('yen', 'เย็น');
+        text = text.replace('tum', 'ทุ่ม');
+        text = text.replace('dtee', 'ตี');
+        text = text.replace('tiang', 'เที่ยง');
+        text = text.replace('keun', 'คืน');
+        text = text.replace('mong', 'โมง');
+        text = text.replace(/neung/g, 'หนึ่ง');
+        text = text.replace(/song/g, 'สอง');
+        text = text.replace(/saam/g, 'สาม');
+        text = text.replace(/see/g, 'สี่');
+        text = text.replace(/ha/g, 'ห้า');
+        text = text.replace(/hok/g, 'หก');
+        text = text.replace(/jet/g, 'เจ็ด');
+        text = text.replace(/bad/g, 'แปด');
+        text = text.replace(/gao/g, 'เก้า');
+        text = text.replace(/sib/g, 'สิบ');
+        text = text.replace(/et/g, 'เอ็ด');
+        text = text.replace(/yee/g, 'ยี่');
+        text = text.replace('na tee', 'นาที');
+        text = text.replace(/\s/g, '');
+        return text;
+      }
+
+      function dispThaiTime() {
+        var time_value = document.getElementById('time').value;
+        var result = document.getElementById('result');
+        var thai_time = '';
+        if (time_value) {
+          var hour = parseInt(time_value.substr(0,2));
+          var min = parseInt(time_value.substr(3,2));
+          var time_of_day = getTimeOfDay(hour);
+          if (hour > 12) hour -= 12;
+          var hour_in_thai = getThaiNumber(hour);
+          if (hour > 6) hour_in_thai = getThaiNumber(hour - 6);
+          if (time_of_day.startsWith('tiang'))
+            thai_time = time_of_day;
+          if (time_of_day == 'dtee')
+            thai_time = time_of_day + ' ' + hour_in_thai;
+          if (time_of_day == 'chao' || time_of_day == 'yen') {
+            thai_time = hour_in_thai + ' mong ' + time_of_day;
+          }
+          if (time_of_day == 'bai') {
+            thai_time = time_of_day + ' mong';
+            if (hour > 1) thai_time += ' ' + hour_in_thai;
+          }
+          if (time_of_day == 'tum') {
+            thai_time = hour_in_thai + ' ' + time_of_day;
+          }
+          if (min > 0) thai_time += ' ' + getThaiNumber(min) + ' na tee';
+        }
+        var time_in_thai_script = romanToThai(thai_time);
+        result.innerHTML = time_in_thai_script + '<br />' + thai_time;
+      }
+    </script>
+  </head>
+  <body>
+    <p>Enter a time:</p>
+    <p><input id="time" type="time" /></p>
+    <p><button id="convert" onclick="dispThaiTime();">How to say it in Thai</button></p>
+    <div id="result"></div>
+  </body>
+</html>
