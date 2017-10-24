@@ -92,8 +92,9 @@
             thai_time = hour_in_thai + ' mong ' + time_of_day;
           }
           if (time_of_day == 'bai') {
-            thai_time = time_of_day + ' mong';
+            thai_time = time_of_day;
             if (hour > 1) thai_time += ' ' + hour_in_thai;
+            thai_time += ' mong';
           }
           if (time_of_day == 'tum') {
             thai_time = hour_in_thai + ' ' + time_of_day;
